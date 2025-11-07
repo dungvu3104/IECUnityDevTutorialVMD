@@ -17,6 +17,9 @@ public class MouseController : MonoBehaviour
 
     private bool isDead = false;
 
+    private uint coins = 0;
+
+
 
 
     // Start is called before the first frame update
@@ -71,7 +74,14 @@ public class MouseController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        HitByLaser(collider);
+        if (collider.gameObject.CompareTag("Coins"))
+        {
+            CollectCoin(collider);
+        }
+        else
+        {
+            HitByLaser(collider);
+        }
     }
 
     void HitByLaser(Collider2D laserCollider)
@@ -80,4 +90,10 @@ public class MouseController : MonoBehaviour
         mouseAnimator.SetBool("isDead", true);
     }
 
+    void CollectCoin(Collider2D coinCollider)
+    {
+        coins++;
+        Destroy(coinCollider.gameObject);
+    }
+  
 }
