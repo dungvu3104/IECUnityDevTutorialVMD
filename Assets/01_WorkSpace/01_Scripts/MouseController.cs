@@ -1,6 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+using UnityEngine.SceneManagement;
+
+
 
 public class MouseController : MonoBehaviour
 {
@@ -18,7 +24,15 @@ public class MouseController : MonoBehaviour
     private bool isDead = false;
 
     private uint coins = 0;
+    public TextMeshProUGUI coinsCollectedLabel;
 
+    public Button restartButton;
+
+    public AudioClip coinCollectSound;
+    public AudioSource jetpackAudio;
+    public AudioSource footstepsAudio;
+
+    public ParallaxScroll parallax;
 
 
 
@@ -48,6 +62,14 @@ public class MouseController : MonoBehaviour
 
         UpdateGroundedStatus();
         AdjustJetpack(jetpackActive);
+        if (isDead && isGrounded)
+        {
+            restartButton.gameObject.SetActive(true);
+        }
+        AdjustFootstepsAndJetpackSound(jetpackActive);
+
+        parallax.offset = transform.position.x;
+
     }
 
     void UpdateGroundedStatus()
@@ -86,6 +108,11 @@ public class MouseController : MonoBehaviour
 
     void HitByLaser(Collider2D laserCollider)
     {
+        if (!isDead)
+        {
+            AudioSource laserZap = laserCollider.gameObject.GetComponent<AudioSource>();
+            laserZap.Play();
+        }
         isDead = true;
         mouseAnimator.SetBool("isDead", true);
     }
@@ -93,7 +120,28 @@ public class MouseController : MonoBehaviour
     void CollectCoin(Collider2D coinCollider)
     {
         coins++;
+        coinsCollectedLabel.text = coins.ToString();
+        AudioSource.PlayClipAtPoint(coinCollectSound, transform.position);
+
         Destroy(coinCollider.gameObject);
     }
-  
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene("Level1");
+    }
+    void AdjustFootstepsAndJetpackSound(bool jetpackActive)
+    {
+        footstepsAudio.enabled = !isDead && isGrounded;
+        jetpackAudio.enabled = !isDead && !isGrounded;
+        if (jetpackActive)
+        {
+            jetpackAudio.volume = 1.0f;
+        }
+        else
+        {
+            jetpackAudio.volume = 0.5f;
+        }
+    }
+
 }
