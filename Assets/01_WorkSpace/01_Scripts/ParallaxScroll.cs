@@ -13,6 +13,8 @@ public class ParallaxScroll : MonoBehaviour
     //3
     public float offset = 0.0f;
 
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,4 +31,5 @@ public class ParallaxScroll : MonoBehaviour
         foreground.material.mainTextureOffset = new Vector2(foregroundOffset, 0);
 
     }
+ 
 }

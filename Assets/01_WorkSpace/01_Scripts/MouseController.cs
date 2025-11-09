@@ -26,13 +26,17 @@ public class MouseController : MonoBehaviour
     private uint coins = 0;
     public TextMeshProUGUI coinsCollectedLabel;
 
-    public Button restartButton;
-
     public AudioClip coinCollectSound;
     public AudioSource jetpackAudio;
     public AudioSource footstepsAudio;
 
     public ParallaxScroll parallax;
+
+    public Text coinsLabel;
+
+    public GameObject restartDialog;
+
+
 
 
 
@@ -41,6 +45,9 @@ public class MouseController : MonoBehaviour
     {
         playerRigidbody = GetComponent<Rigidbody2D>();
         mouseAnimator = GetComponent<Animator>();
+
+        restartDialog.SetActive(false);
+
     }
 
     void FixedUpdate()
@@ -62,10 +69,7 @@ public class MouseController : MonoBehaviour
 
         UpdateGroundedStatus();
         AdjustJetpack(jetpackActive);
-        if (isDead && isGrounded)
-        {
-            restartButton.gameObject.SetActive(true);
-        }
+
         AdjustFootstepsAndJetpackSound(jetpackActive);
 
         parallax.offset = transform.position.x;
@@ -115,6 +119,8 @@ public class MouseController : MonoBehaviour
         }
         isDead = true;
         mouseAnimator.SetBool("isDead", true);
+        restartDialog.SetActive(true);
+
     }
 
     void CollectCoin(Collider2D coinCollider)
@@ -122,14 +128,9 @@ public class MouseController : MonoBehaviour
         coins++;
         coinsCollectedLabel.text = coins.ToString();
         AudioSource.PlayClipAtPoint(coinCollectSound, transform.position);
-
         Destroy(coinCollider.gameObject);
     }
 
-    public void RestartGame()
-    {
-        SceneManager.LoadScene("Level1");
-    }
     void AdjustFootstepsAndJetpackSound(bool jetpackActive)
     {
         footstepsAudio.enabled = !isDead && isGrounded;
@@ -143,5 +144,16 @@ public class MouseController : MonoBehaviour
             jetpackAudio.volume = 0.5f;
         }
     }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void ExitToMenu()
+    {
+        SceneManager.LoadScene("MenuScene");
+    }
+
 
 }

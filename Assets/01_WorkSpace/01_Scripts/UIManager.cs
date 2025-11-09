@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour
 
     public Animator dialog;
 
+    public Animator contentPanel;
+
+
     public void StartGame()
     {
         SceneManager.LoadScene("Level1");
@@ -34,5 +37,11 @@ public class UIManager : MonoBehaviour
     void Update()
     {
 
+    }
+
+    public void ToggleMenu()
+    {
+        bool isHidden = contentPanel.GetBool("isHidden");
+        contentPanel.SetBool("isHidden", !isHidden);
     }
 }
