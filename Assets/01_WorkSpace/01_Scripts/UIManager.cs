@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DG.Tweening; // 👈 import DOTween
 
 public class UIManager : MonoBehaviour
 {
     public Animator startButton;
     public Animator settingsButton;
-
     public Animator dialog;
 
-    public Animator contentPanel;
+    // 🆕 The UI panel you want to move
+    public RectTransform contentPanel;
 
+    // 🆕 Track current state
+    private bool isPanelDown = false;
 
     public void StartGame()
     {
@@ -32,16 +35,26 @@ public class UIManager : MonoBehaviour
         dialog.SetBool("isHidden", true);
     }
 
-
-    // Update is called once per frame
-    void Update()
+    // 🆕 Toggle panel up/down with DOTween animation
+    public void ToggleContentPanel()
     {
+        if (contentPanel == null)
+        {
+            Debug.LogWarning("⚠ contentPanel is not assigned in the inspector!");
+            return;
+        }
 
-    }
+        // Kill any current tweens on this object (prevents overlap)
+        contentPanel.DOKill();
 
-    public void ToggleMenu()
-    {
-        bool isHidden = contentPanel.GetBool("isHidden");
-        contentPanel.SetBool("isHidden", !isHidden);
+        // Determine the direction
+        float moveAmount = isPanelDown ? -192f : 192f;
+
+        // Animate to the new anchoredPosition
+        contentPanel.DOAnchorPosY(contentPanel.anchoredPosition.y + moveAmount, 0.4f)
+            .SetEase(Ease.OutQuad);
+
+        // Flip the state
+        isPanelDown = !isPanelDown;
     }
 }
